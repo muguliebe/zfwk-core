@@ -1,12 +1,11 @@
 # zfwk-core
 framework core by spring boot
 
-## use zfwk-core
+## implementation zfwk-core
 ```shell
-git remote add zfwk git@github.com:muguliebe/zfwk-core.git
-git subtree add --prefix=src/main/kotlin/zfwk zfwk main
-git subtree push --prefix=src/main/kotlin/zfwk zfwk main
-git subtree pull --prefix=src/main/kotlin/zfwk zfwk main
+    maven {
+        url = uri("https://nexus.egstep.com/repository/maven-public/")
+    }
 ```
 
 ## need origin project's build.gradle
