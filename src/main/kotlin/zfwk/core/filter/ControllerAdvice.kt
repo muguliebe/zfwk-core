@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import zfwk.core.component.Commons
-import zfwk.core.ext.loggerFor
 import zfwk.zutils.DateUtils
 import java.net.InetAddress
 import java.net.URI
@@ -21,7 +20,7 @@ import java.net.UnknownHostException
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.*
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 @Aspect
 @Component
@@ -50,14 +49,14 @@ class ControllerAdvice {
     fun aroundController(pjp: ProceedingJoinPoint): Any? {
 
         // init --------------------------------------------------------------------------------------------------------
-        var result: Any? = null
+        var result: Any?
         val req = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
         val area = commons.area
         val signatureName = "${pjp.signature.declaringType.simpleName}.${pjp.signature.name}"
 
         // 전역변수 셋팅
         if (!isSetVariable) {
-            setStatidVariable()
+            setStaticVariable()
         }
 
         // CommonArea
@@ -68,10 +67,10 @@ class ControllerAdvice {
             log.info("[${area.gid}] >>>>>  controller start [$signatureName() from [${area.remoteIp}] by ${area.method} ${area.path}")
             result = pjp.proceed()
         } catch (e: Exception) {
-            log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elaps}ms] with Error [${e.javaClass.simpleName}]")
+            log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms] with Error [${e.javaClass.simpleName}]")
             throw e
         }
-        log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elaps}ms]")
+        log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms]")
 
 
         // end ---------------------------------------------------------------------------------------------------------
@@ -118,7 +117,7 @@ class ControllerAdvice {
     /**
      * 전역 변수 셋팅
      */
-    private fun setStatidVariable() {
+    private fun setStaticVariable() {
         // 호스트명 셋팅
         hostName = try {
             InetAddress.getLocalHost().hostName

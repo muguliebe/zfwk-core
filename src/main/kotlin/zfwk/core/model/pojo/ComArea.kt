@@ -15,7 +15,7 @@ data class ComArea(
     var statCd: String? = null,
     var startDt: OffsetDateTime? = null,
     var endDt: OffsetDateTime? = null,
-    var elaps: String? = "0",
+    var elapse: String? = "0",
     var hostName: String = "",
     var remoteIp: String = "",
     var queryString: String? = null,
@@ -26,7 +26,7 @@ data class ComArea(
     var user: ComUser? = null,
     var err: Exception? = null,
     val profile: String? = null,
-    val startupTime: Any = ComArea.startupTime,
+    val startupTime: Any = Companion.startupTime,
     var referrer: String? = null,
     var bDev: Boolean = true,    // 로컬도 true
     var bLocal: Boolean = true,  // 로컬만 true
