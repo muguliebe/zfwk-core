@@ -56,7 +56,7 @@ class ControllerAdvice {
     fun aroundController(pjp: ProceedingJoinPoint): Any? {
 
         // init --------------------------------------------------------------------------------------------------------
-        var result: Any?
+        val result: Any?
         val req = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
         val area = context.area
         val signatureName = "${pjp.signature.declaringType.simpleName}.${pjp.signature.name}"

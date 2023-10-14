@@ -8,7 +8,7 @@ class TmpTest : BaseTest() {
     @Test
     fun test(){
         (1..10).toList().forEach {
-            println("it = ${it}")
+            log.info("it = ${it}")
         }
     }
 }

@@ -17,12 +17,12 @@ class ProtoController : BaseController() {
 
     @GetMapping
     fun protoGet(): String {
-        log.info("protoGet start")
+        log.info("protoGet start:${context.area.guid}")
 
         val result = service.test()
         log.info("result=$result")
 
-        log.info("protoGet end")
+        log.info("protoGet end:${context.area.guid}")
         return "ok"
     }
 

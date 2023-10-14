@@ -23,7 +23,7 @@ class ApiRegPublisher {
 
     @EventListener
     fun ready(event: ApplicationReadyEvent) {
-        var cntApi = handlerMapping.handlerMethods.size
+        val cntApi = handlerMapping.handlerMethods.size
         val elapsed = measureTimeMillis {
 
             val regists: MutableList<ApiRegInfo> = mutableListOf<ApiRegInfo>()
@@ -47,7 +47,7 @@ class ApiRegPublisher {
         val hm: Method = pair.value.method
         val className = hm.declaringClass.canonicalName
         val funcName = hm.name.split("#").last()
-        var methods = mutableListOf<String>() // http method
+        val methods = mutableListOf<String>() // http method
 
 
         val urls = rmi.pathPatternsCondition!!.patterns.map { it.patternString }

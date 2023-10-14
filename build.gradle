@@ -31,7 +31,7 @@ repositories {
 java {
     sourceCompatibility = '17'
 }
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).all {
     kotlinOptions {
         jvmTarget = '17'
         freeCompilerArgs += '-Xjsr305=strict'
@@ -100,7 +100,7 @@ if (hasProperty('buildScan')) {
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        zfwk(MavenPublication) {
             groupId = group
             artifactId = rootProject.name
             version = "$version"
@@ -134,7 +134,7 @@ test {
 
 tasks {
     processResources {
-        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
 
