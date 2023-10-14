@@ -1,6 +1,5 @@
 package zfwk.core.proto.service
 
-import org.apache.commons.lang3.arch.Processor
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import zfwk.core.base.BaseService

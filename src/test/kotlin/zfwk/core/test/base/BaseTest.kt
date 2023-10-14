@@ -2,6 +2,6 @@ package zfwk.core.test.base
 
 import zfwk.zutils.logger
 
-class BaseTest {
+open class BaseTest {
     val log = logger()
 }
