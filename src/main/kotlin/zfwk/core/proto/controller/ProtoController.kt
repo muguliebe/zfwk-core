@@ -26,4 +26,8 @@ class ProtoController : BaseController() {
         return "ok"
     }
 
+    @GetMapping("/nothing")
+    fun nothing() {
+    }
+
 }

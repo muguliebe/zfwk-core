@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import zfwk.core.component.ZContext
-import zfwk.core.event.dto.TrEvent
-import zfwk.core.event.dto.TrEventType
+import zfwk.core.event.TrEvent
+import zfwk.core.event.TrEventType
 import zfwk.zutils.DateUtils
 import zfwk.zutils.EtcUtils
 import zfwk.zutils.GuidUtils

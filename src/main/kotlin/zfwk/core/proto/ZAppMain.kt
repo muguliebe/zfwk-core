@@ -8,6 +8,7 @@ import zfwk.zutils.logger
 
 
 @SpringBootApplication(
+    scanBasePackages = ["zfwk"],
     exclude = [DataSourceAutoConfiguration::class]
 )
 class ZAppMain {

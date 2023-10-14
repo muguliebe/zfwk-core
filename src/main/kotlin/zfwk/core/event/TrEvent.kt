@@ -1,4 +1,4 @@
-package zfwk.core.event.dto
+package zfwk.core.event
 
 import zfwk.core.component.ZContext
 
