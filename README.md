@@ -1,11 +1,25 @@
 # zfwk-core
 framework core by spring boot
 
-## implementation zfwk-core
-```shell
+## version
+spring boto version "3.1.4"
+io.spring.dependency-management version "1.1.3"
+
+
+## implementation zfwk-core & use zfwk-bom
+```kts
+repositories{
     maven {
         url = uri("https://nexus.egstep.com/repository/maven-public/")
     }
+    mavenCentral()
+
+}
+    
+dependencies{
+    implementation(platform("com.egstep:zfwk-bom:1.9"))
+}
+
 ```
 
 ## need origin project's build.gradle

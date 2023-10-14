@@ -8,7 +8,10 @@
     "sub-add-zutils": "git subtree add --prefix=src/main/kotlin/zfwk/zutils zutils main",
     "sub-push": "git subtree push --prefix=src/main/kotlin/zfwk/zutils zutils main",
     "sub-pull": "git subtree pull --prefix=src/main/kotlin/zfwk/zutils zutils main",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "./gradlew clean",
+    "refresh": "./gradlew --refresh-dependencies",
+    "build": "./gradlew build",
+    "publish": "./gradlew clean && ./gradlew build && ./gradlew publish"
   },
   "repository": {
     "type": "git",

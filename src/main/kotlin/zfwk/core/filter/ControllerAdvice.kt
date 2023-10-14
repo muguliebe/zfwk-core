@@ -1,6 +1,9 @@
 package zfwk.core.filter
 
 import ch.qos.logback.classic.Logger
+import jakarta.servlet.http.HttpServletRequest
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -8,19 +11,20 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import zfwk.core.component.Commons
+import zfwk.core.component.ZContext
+import zfwk.core.event.dto.TrEvent
+import zfwk.core.event.dto.TrEventType
 import zfwk.zutils.DateUtils
-import java.net.InetAddress
+import zfwk.zutils.EtcUtils
+import zfwk.zutils.GuidUtils
 import java.net.URI
-import java.net.UnknownHostException
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.*
-import jakarta.servlet.http.HttpServletRequest
 
 @Aspect
 @Component
@@ -37,13 +41,16 @@ class ControllerAdvice {
     var bDev: Boolean = true                                              // 개발계 여부
     var bLocal: Boolean = true                                            // 로컬 여부
     var bPrd: Boolean = false                                             // 운영계 여부
-    @Value("\${app.version:0.1}") val appVersion: String = ""             // 어플리케이션 버젼
-    @Value("\${app.local-pass:false}") val isLocalPass: Boolean = false   // local 구동 시, permission 체크를 할 것인가?
+
+    @Value("\${app.version:0.1}")
+    val appVersion: String = ""             // 어플리케이션 버젼
+
+    @Value("\${app.local-pass:false}")
+    val isLocalPass: Boolean = false   // local 구동 시, permission 체크를 할 것인가?
 
     @Autowired lateinit var ctx: ApplicationContext                       // Context
-    @Autowired lateinit var commons: Commons                              // Common 영역
-
-
+    @Autowired lateinit var context: ZContext                              // Common 영역
+    @Autowired lateinit var publisher: ApplicationEventPublisher
 
     @Around("PointCutList.allController()")
     fun aroundController(pjp: ProceedingJoinPoint): Any? {
@@ -51,7 +58,7 @@ class ControllerAdvice {
         // init --------------------------------------------------------------------------------------------------------
         var result: Any?
         val req = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        val area = commons.area
+        val area = context.area
         val signatureName = "${pjp.signature.declaringType.simpleName}.${pjp.signature.name}"
 
         // 전역변수 셋팅
@@ -60,21 +67,25 @@ class ControllerAdvice {
         }
 
         // CommonArea
-        setCommonArea(req, pjp)
+        setCommonArea(req)
 
         // main --------------------------------------------------------------------------------------------------------
         try {
-            log.info("[${area.gid}] >>>>>  controller start [$signatureName() from [${area.remoteIp}] by ${area.method} ${area.path}")
+            log.info("[${area.guid}] >>>>>  controller start [$signatureName() from [${area.remoteIp}] by ${area.method} ${area.path}")
             result = pjp.proceed()
         } catch (e: Exception) {
-            log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms] with Error [${e.javaClass.simpleName}]")
+            log.info("[${area.guid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms] with Error [${e.javaClass.simpleName}]")
             throw e
         }
-        log.info("[${area.gid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms]")
+        log.info("[${area.guid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms]")
 
 
         // end ---------------------------------------------------------------------------------------------------------
         log.info("controller end")
+
+        GlobalScope.async {
+            publisher.publishEvent(TrEvent(TrEventType.AFTER, context))
+        }
 
         return result
     }
@@ -82,7 +93,7 @@ class ControllerAdvice {
     /**
      * Common Area 설정
      */
-    private fun setCommonArea(req: HttpServletRequest, pjp: ProceedingJoinPoint) {
+    private fun setCommonArea(req: HttpServletRequest) {
 
         // Client IP
         var clientIp = req.getHeader("x-forwarded-for")
@@ -93,23 +104,23 @@ class ControllerAdvice {
         }
 
         // commonArea
-        commons.area.appName = appName
-        commons.area.appVer = appVersion
-        commons.area.date = DateUtils.currentDate()
-        commons.area.gid = UUID.randomUUID().toString()
-        commons.area.method = req.method
-        commons.area.path = req.requestURI
-        commons.area.startDt = OffsetDateTime.now(ZoneId.of("+9"))
-        commons.area.remoteIp = clientIp
-        commons.area.queryString = req.queryString
-        commons.area.hostName = hostName
-        commons.area.bDev = bDev
-        commons.area.bLocal = bLocal
-        commons.area.bPrd = bPrd
+        context.area.appName = appName
+        context.area.appVer = appVersion
+        context.area.date = DateUtils.currentDateString()
+        context.area.guid = GuidUtils.generate()
+        context.area.method = req.method
+        context.area.path = req.requestURI
+        context.area.startDt = OffsetDateTime.now(ZoneId.of("+9"))
+        context.area.remoteIp = clientIp
+        context.area.queryString = req.queryString
+        context.area.hostName = hostName
+        context.area.bDev = bDev
+        context.area.bLocal = bLocal
+        context.area.bPrd = bPrd
 
         if (req.getHeader("referer") != null) {
             val referrer = req.getHeader("referer")
-            commons.area.referrer = URI(referrer).path
+            context.area.referrer = URI(referrer).path
         }
 
     }
@@ -119,12 +130,7 @@ class ControllerAdvice {
      */
     private fun setStaticVariable() {
         // 호스트명 셋팅
-        hostName = try {
-            InetAddress.getLocalHost().hostName
-        } catch (e: UnknownHostException) {
-            log.error("err occurred when get hostname: ${e.message}")
-            "unknown"
-        }
+        hostName = EtcUtils.hostName()
 
         // 어플리케이션명 셋팅
         val env = ctx.getBean("environment") as Environment

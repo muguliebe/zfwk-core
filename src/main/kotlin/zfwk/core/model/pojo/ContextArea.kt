@@ -3,12 +3,12 @@ package zfwk.core.model.pojo
 import zfwk.zutils.DateUtils
 import java.time.OffsetDateTime
 
-data class ComArea(
+data class ContextArea(
     var transactionId: Long = 0,
     var appName: String = "",
     var appVer: String = "",
     var date: String = "",
-    var gid: String = "",
+    var guid: String = "",
     var sessId: String = "",
     var method: String = "",
     var path: String = "",

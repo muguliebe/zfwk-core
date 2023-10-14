@@ -1,35 +1,25 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:1.7.0"
-    }
-}
 plugins {
-//    id 'org.springframework.boot' version '3.1.4'
+    id 'org.springframework.boot' version '3.1.4' // comment before publish
     id 'org.jetbrains.kotlin.jvm' version '1.9.10'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.31'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.31'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.10'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.10'
+    id 'application'
     id 'maven-publish'
     id 'java-library'
 }
 
-//apply plugin: 'io.spring.dependency-management'
+apply plugin: 'io.spring.dependency-management' // comment before publish
 apply plugin: 'kotlin-jpa'
 apply plugin: 'kotlin-allopen'
 apply plugin: 'java'
 
 group = 'com.egstep'
-version = '1.1.5'
-
-java {
-    sourceCompatibility = '17'
-}
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
+version = '1.1.26'
+def springVersion = '3.1.4'
+def zfwkBomVersion = '1.27'
+def versionKotest = '5.7.2'
 
 repositories {
     mavenCentral()
@@ -38,47 +28,67 @@ repositories {
     }
 }
 
+java {
+    sourceCompatibility = '17'
+}
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs += '-Xjsr305=strict'
+    }
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '17'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '17'
+}
 
 dependencies {
+    compileOnly(platform("com.egstep:zfwk-bom:${zfwkBomVersion}"))
+
     // spring
-    implementation("org.springframework.boot:spring-boot-starter-parent:3.1.4")
-    implementation("org.springframework.boot:spring-boot-starter:3.1.4")
-    implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.4")
-    implementation("org.springframework.boot:spring-boot-starter-aop:3.1.4")
+    implementation("org.springframework.boot:spring-boot-starter-parent:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-starter:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-web:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-aop:${springVersion}")
+    implementation("org.springframework.boot:spring-boot-devtools:${springVersion}")
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation 'org.jetbrains.kotlin:kotlin-maven-allopen:1.7.0'
+    implementation("org.jetbrains.kotlin:kotlin-maven-allopen:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // zfwk
-    implementation 'com.egstep:zutils-kt:1.0.0-SNAPSHOT'
+    implementation('com.egstep:zutils-kt:1.1.25')
 
     // test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springVersion}")
+    testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
+    testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
+    testImplementation("io.kotest:kotest-property:$versionKotest")
+    testImplementation("io.kotest:kotest-framework-datatest:$versionKotest")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.4.0")
 
-test {
-    useJUnitPlatform()
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
 }
 
 sourceSets {
     main.java.srcDir "src/main/kotlin"
     main.resources.srcDir "src/main/resources"
+    test.java.srcDir "src/test/kotlin"
 }
-
 
 jar {
     enabled = true
+}
+
+bootJar {
+    enabled = false
 }
 
 if (hasProperty('buildScan')) {
@@ -94,9 +104,10 @@ publishing {
             groupId = group
             artifactId = rootProject.name
             version = "$version"
-            artifact("build/libs/$rootProject.name-$version" + ".jar") {
-                extension 'jar'
-            }
+//            artifact("build/libs/$rootProject.name-$version" + ".jar") {
+//                extension 'jar'
+//            }
+            from components.java
         }
 
     }
@@ -116,9 +127,14 @@ publishing {
     }
 }
 
-tasks.withType(KotlinCompile) {
-    kotlinOptions {
-        freeCompilerArgs += '-Xjsr305=strict'
-        jvmTarget = '17'
+test {
+    useJUnitPlatform()
+}
+
+
+tasks {
+    processResources {
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
     }
 }
+
