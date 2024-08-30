@@ -16,7 +16,7 @@ apply(plugin = "kotlin-allopen")
 apply(plugin = "java")
 
 group = "com.github.muguliebe.zfwk"
-version = "0.3.1"
+version = "0.3.2"
 
 val springVersion = "3.1.4"
 val zfwkBomVersion = "0.5.4"
@@ -25,7 +25,6 @@ val versionKotest = "5.7.2"
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
-
 }
 
 java {
@@ -39,6 +38,15 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs += "-Xjsr305=strict"
     }
 }
+
+// comment before publish
+//tasks.jar {
+//    enabled = true
+//}
+//
+//tasks.bootJar {
+//    enabled = false
+//}
 
 dependencies {
     implementation(platform("com.github.muguliebe:zfwk-dependency:$zfwkBomVersion"))
@@ -82,16 +90,6 @@ sourceSets {
     }
 }
 
-if (!project.hasProperty("skipBoot")) {
-
-    tasks.jar {
-        enabled = true
-    }
-
-    tasks.bootJar {
-        enabled = false
-    }
-}
 
 publishing {
     publications {
