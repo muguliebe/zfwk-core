@@ -1,5 +1,6 @@
 package com.github.muguliebe.zfwk.core.base
 
+import com.github.muguliebe.zfwk.core.component.ZContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 
@@ -8,6 +9,8 @@ import org.springframework.context.ApplicationContext
  */
 abstract class BaseObject {
 
-    @Autowired lateinit var ctx: ApplicationContext
+    @Autowired lateinit var applicationContext: ApplicationContext
+
+    val context= ZContext.getInstance()
 
 }

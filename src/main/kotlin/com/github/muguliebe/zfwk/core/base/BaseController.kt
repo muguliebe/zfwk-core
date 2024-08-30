@@ -9,6 +9,4 @@ open class BaseController : BaseObject() {
 
     protected val log = LoggerFactory.getLogger(this::class.java) as Logger
 
-    @Autowired lateinit var context: ZContext
-
 }

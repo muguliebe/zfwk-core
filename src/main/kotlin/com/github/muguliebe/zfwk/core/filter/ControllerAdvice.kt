@@ -58,7 +58,7 @@ class ControllerAdvice {
         // init --------------------------------------------------------------------------------------------------------
         val result: Any?
         val req = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        val area = context.area
+        val area = context.common
         val signatureName = "${pjp.signature.declaringType.simpleName}.${pjp.signature.name}"
 
         // 전역변수 셋팅
@@ -104,23 +104,23 @@ class ControllerAdvice {
         }
 
         // commonArea
-        context.area.appName = appName
-        context.area.appVer = appVersion
-        context.area.date = DateUtils.currentDateString()
-        context.area.guid = GuidUtils.generate()
-        context.area.method = req.method
-        context.area.path = req.requestURI
-        context.area.startDt = OffsetDateTime.now(ZoneId.of("+9"))
-        context.area.remoteIp = clientIp
-        context.area.queryString = req.queryString
-        context.area.hostName = hostName
-        context.area.bDev = bDev
-        context.area.bLocal = bLocal
-        context.area.bPrd = bPrd
+        context.common.appName = appName
+        context.common.appVer = appVersion
+        context.common.date = DateUtils.currentDateString()
+        context.common.guid = GuidUtils.generate()
+        context.common.method = req.method
+        context.common.path = req.requestURI
+        context.common.startDt = OffsetDateTime.now(ZoneId.of("+9"))
+        context.common.remoteIp = clientIp
+        context.common.queryString = req.queryString
+        context.common.hostName = hostName
+        context.common.bDev = bDev
+        context.common.bLocal = bLocal
+        context.common.bPrd = bPrd
 
         if (req.getHeader("referer") != null) {
             val referrer = req.getHeader("referer")
-            context.area.referrer = URI(referrer).path
+            context.common.referrer = URI(referrer).path
         }
 
     }

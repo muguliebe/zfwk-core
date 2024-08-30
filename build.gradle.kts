@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-//    id("org.springframework.boot") version "3.1.4" // comment before publish
+    id("org.springframework.boot") version "3.1.4" // comment before publish
     id("org.jetbrains.kotlin.jvm") version "1.9.10"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.9.10"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.10"
@@ -10,7 +10,7 @@ plugins {
     `java-library`
 }
 
-//apply(plugin = "io.spring.dependency-management") // comment before publish
+apply(plugin = "io.spring.dependency-management") // comment before publish
 apply(plugin = "kotlin-jpa")
 apply(plugin = "kotlin-allopen")
 apply(plugin = "java")
@@ -39,14 +39,15 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
-// comment before publish
-//tasks.jar {
-//    enabled = true
-//}
-//
-//tasks.bootJar {
-//    enabled = false
-//}
+// comment before publish start
+tasks.jar {
+    enabled = true
+}
+
+tasks.bootJar {
+    enabled = false
+}
+// comment before publish start
 
 dependencies {
     implementation(platform("com.github.muguliebe:zfwk-dependency:$zfwkBomVersion"))

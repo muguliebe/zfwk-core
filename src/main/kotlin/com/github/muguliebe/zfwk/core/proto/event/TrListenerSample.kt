@@ -13,6 +13,6 @@ class TrListenerSample {
 
     @EventListener
     fun onTrtr(event: TrEvent){
-        log.info("listen > ${event.trContext.area.guid}")
+        log.info("listen > ${event.trContext.common.guid}")
     }
 }
