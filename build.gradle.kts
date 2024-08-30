@@ -16,7 +16,7 @@ apply(plugin = "kotlin-allopen")
 apply(plugin = "java")
 
 group = "com.github.muguliebe.zfwk"
-version = "0.2.0"
+version = "0.3.0"
 
 val springVersion = "3.1.4"
 val zfwkBomVersion = "0.5.4"
