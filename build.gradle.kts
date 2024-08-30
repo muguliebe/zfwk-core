@@ -16,7 +16,7 @@ apply(plugin = "kotlin-allopen")
 apply(plugin = "java")
 
 group = "com.github.muguliebe.zfwk"
-version = "0.3.0"
+version = "0.3.1"
 
 val springVersion = "3.1.4"
 val zfwkBomVersion = "0.5.4"
@@ -82,12 +82,15 @@ sourceSets {
     }
 }
 
-tasks.jar {
-    enabled = true
-}
+if (!project.hasProperty("skipBoot")) {
 
-tasks.bootJar {
-    enabled = false
+    tasks.jar {
+        enabled = true
+    }
+
+    tasks.bootJar {
+        enabled = false
+    }
 }
 
 publishing {
