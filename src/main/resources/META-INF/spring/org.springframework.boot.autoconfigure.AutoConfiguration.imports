@@ -1,4 +1,4 @@
-zfwk.core.component.ZContext
-zfwk.core.config.ZfwkConfig
-zfwk.core.filter.ControllerAdvice
-zfwk.core.listner.ApiRegPublisher
+com.github.muguliebe.zfwk.core.component.ZContext
+com.github.muguliebe.zfwk.core.config.ZfwkConfig
+com.github.muguliebe.zfwk.core.filter.ControllerAdvice
+com.github.muguliebe.zfwk.core.listner.ApiRegPublisher
