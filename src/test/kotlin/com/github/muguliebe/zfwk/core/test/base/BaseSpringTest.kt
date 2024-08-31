@@ -1,6 +1,6 @@
 package com.github.muguliebe.zfwk.core.test.base
 
-import com.github.muguliebe.zfwk.core.proto.ZAppMain
+import com.github.muguliebe.zfwk.proto.ZAppMain
 import io.kotest.core.spec.style.FunSpec
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith

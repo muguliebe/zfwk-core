@@ -1,4 +1,4 @@
-package com.github.muguliebe.zfwk.core.proto.counter
+package com.github.muguliebe.zfwk.proto.counter
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry

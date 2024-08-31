@@ -1,7 +1,7 @@
 package com.github.muguliebe.zfwk.core.filter
 
 import ch.qos.logback.classic.Logger
-import com.github.muguliebe.zfwk.core.component.ZContext
+import com.github.muguliebe.zfwk.core.context.ZContext
 import com.github.muguliebe.zfwk.core.event.TrEvent
 import com.github.muguliebe.zfwk.core.event.TrEventType
 import com.github.muguliebe.zfwk.zutils.DateUtils
@@ -34,14 +34,6 @@ class ControllerAdvice {
         private val log = LoggerFactory.getLogger("ControllerAdvice") as Logger
     }
 
-    var isSetVariable = false                                             // 전역변수를 셋팅하였는가?
-    lateinit var hostName: String                                         // 서버명
-    lateinit var appName: String                                          // 어플리케이션명
-    lateinit var profile: String                                          // 프로파일
-    var bDev: Boolean = true                                              // 개발계 여부
-    var bLocal: Boolean = true                                            // 로컬 여부
-    var bPrd: Boolean = false                                             // 운영계 여부
-
     @Value("\${app.version:0.1}")
     val appVersion: String = ""             // 어플리케이션 버젼
 
@@ -49,7 +41,6 @@ class ControllerAdvice {
     val isLocalPass: Boolean = false   // local 구동 시, permission 체크를 할 것인가?
 
     @Autowired lateinit var ctx: ApplicationContext                       // Context
-    @Autowired lateinit var context: ZContext                              // Common 영역
     @Autowired lateinit var publisher: ApplicationEventPublisher
 
     @Around("PointCutList.allController()")
@@ -58,26 +49,19 @@ class ControllerAdvice {
         // init --------------------------------------------------------------------------------------------------------
         val result: Any?
         val req = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        val area = context.common
         val signatureName = "${pjp.signature.declaringType.simpleName}.${pjp.signature.name}"
-
-        // 전역변수 셋팅
-        if (!isSetVariable) {
-            setStaticVariable()
-        }
-
-        // CommonArea
-        setCommonArea(req)
+        val context = ZContext.getInstance()
+        val common = context.common
 
         // main --------------------------------------------------------------------------------------------------------
         try {
-            log.info("[${area.guid}] >>>>>  controller start [$signatureName() from [${area.remoteIp}] by ${area.method} ${area.path}")
+            log.info("[${common.guid}] >>>>>  controller start [$signatureName() from [${common.remoteIp}] by ${common.method} ${common.path}")
             result = pjp.proceed()
         } catch (e: Exception) {
-            log.info("[${area.guid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms] with Error [${e.javaClass.simpleName}]")
+            log.info("[${common.guid}] <<<<<  controller   end [$signatureName() from [${common.remoteIp}] [${common.elapse}ms] with Error [${e.javaClass.simpleName}]")
             throw e
         }
-        log.info("[${area.guid}] <<<<<  controller   end [$signatureName() from [${area.remoteIp}] [${area.elapse}ms]")
+        log.info("[${common.guid}] <<<<<  controller   end [$signatureName() from [${common.remoteIp}] [${common.elapse}ms]")
 
 
         // end ---------------------------------------------------------------------------------------------------------
@@ -90,94 +74,4 @@ class ControllerAdvice {
         return result
     }
 
-    /**
-     * Common Area 설정
-     */
-    private fun setCommonArea(req: HttpServletRequest) {
-
-        // Client IP
-        var clientIp = req.getHeader("x-forwarded-for")
-        clientIp = if (clientIp != null) {
-            clientIp.split(",")[0]
-        } else {
-            req.remoteAddr
-        }
-
-        // commonArea
-        context.common.appName = appName
-        context.common.appVer = appVersion
-        context.common.date = DateUtils.currentDateString()
-        context.common.guid = GuidUtils.generate()
-        context.common.method = req.method
-        context.common.path = req.requestURI
-        context.common.startDt = OffsetDateTime.now(ZoneId.of("+9"))
-        context.common.remoteIp = clientIp
-        context.common.queryString = req.queryString
-        context.common.hostName = hostName
-        context.common.bDev = bDev
-        context.common.bLocal = bLocal
-        context.common.bPrd = bPrd
-
-        if (req.getHeader("referer") != null) {
-            val referrer = req.getHeader("referer")
-            context.common.referrer = URI(referrer).path
-        }
-
-    }
-
-    /**
-     * 전역 변수 셋팅
-     */
-    private fun setStaticVariable() {
-        // 호스트명 셋팅
-        hostName = EtcUtils.hostName()
-
-        // 어플리케이션명 셋팅
-        val env = ctx.getBean("environment") as Environment
-
-        // 개발계 여부
-        bDev = when {
-            "dev" in env.activeProfiles -> true
-            else -> false
-        }
-
-        // 로컬 여부
-        bLocal = when {
-            "local" in env.activeProfiles -> true
-            else -> false
-        }
-
-        // 운영계 여부
-        bPrd = when {
-            "prd" in env.activeProfiles -> true
-            else -> false
-        }
-
-        // 어플리케이션 명
-        appName = when {
-            env.containsProperty("app.name") -> env.getProperty("app.name")!!
-            else -> "appName"
-        }
-
-        profile = appName
-        profile += when {
-            "prd" in env.activeProfiles -> "-prd"
-            "dev" in env.activeProfiles -> "-dev"
-            "local" in env.activeProfiles -> "-local"
-            else -> "-unknown"
-        }
-
-        // 현 함수 재호출 되지 않도록 Marking
-        isSetVariable = true
-
-        // logging
-        log.info("========== Static Variable ==============")
-        log.info("hostName:$hostName")
-        log.info("bDev:$bDev")
-        log.info("bLocal:$bLocal")
-        log.info("bPrd:$bPrd")
-        log.info("appName:$appName")
-        log.info("profile:$profile")
-        log.info("=========================================")
-    }
 }

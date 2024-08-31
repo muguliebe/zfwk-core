@@ -1,7 +1,7 @@
-package com.github.muguliebe.zfwk.core.proto.service
+package com.github.muguliebe.zfwk.proto.service
 
 import com.github.muguliebe.zfwk.core.base.BaseService
-import com.github.muguliebe.zfwk.core.proto.model.ProtoModel
+import com.github.muguliebe.zfwk.proto.model.ProtoModel
 import com.github.muguliebe.zfwk.zutils.EtcUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service

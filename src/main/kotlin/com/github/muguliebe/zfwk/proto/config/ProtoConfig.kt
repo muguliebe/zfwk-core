@@ -1,4 +1,4 @@
-package com.github.muguliebe.zfwk.core.proto.config
+package com.github.muguliebe.zfwk.proto.config
 
 import com.github.muguliebe.zfwk.zutils.logger
 import org.springframework.cache.annotation.EnableCaching
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableAsync
 @EnableCaching
 @EnableScheduling
-@EnableTransactionManagement(proxyTargetClass = true)
 class ProtoConfig {
 
     val log = logger()
@@ -29,15 +28,4 @@ class ProtoConfig {
         return this
     }
 
-    @Bean(name = ["threadPoolTaskExecutor"])
-    fun taskExecutor(): TaskExecutor {
-        val taskExecutor = ThreadPoolTaskExecutor()
-        taskExecutor.corePoolSize = 1000
-        taskExecutor.queueCapacity = 1000
-        taskExecutor.maxPoolSize = 1000
-        taskExecutor.setThreadNamePrefix("Executor-")
-        taskExecutor.setWaitForTasksToCompleteOnShutdown(true)
-        taskExecutor.setAwaitTerminationSeconds(10)
-        return taskExecutor
-    }
 }

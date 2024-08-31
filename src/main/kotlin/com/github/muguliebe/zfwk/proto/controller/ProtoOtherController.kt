@@ -1,4 +1,4 @@
-package com.github.muguliebe.zfwk.core.proto.controller
+package com.github.muguliebe.zfwk.proto.controller
 
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.GetMapping

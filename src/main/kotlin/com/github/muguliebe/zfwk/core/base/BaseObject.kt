@@ -1,6 +1,6 @@
 package com.github.muguliebe.zfwk.core.base
 
-import com.github.muguliebe.zfwk.core.component.ZContext
+import com.github.muguliebe.zfwk.core.context.ZContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 

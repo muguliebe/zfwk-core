@@ -1,4 +1,4 @@
-com.github.muguliebe.zfwk.core.component.ZContext
+com.github.muguliebe.zfwk.core.context.ZContext
 com.github.muguliebe.zfwk.core.config.ZfwkConfig
 com.github.muguliebe.zfwk.core.filter.ControllerAdvice
 com.github.muguliebe.zfwk.core.listner.ApiRegPublisher

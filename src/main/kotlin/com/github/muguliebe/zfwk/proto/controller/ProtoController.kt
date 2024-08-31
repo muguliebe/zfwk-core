@@ -1,8 +1,8 @@
-package com.github.muguliebe.zfwk.core.proto.controller
+package com.github.muguliebe.zfwk.proto.controller
 
 import com.github.muguliebe.zfwk.core.base.BaseController
-import com.github.muguliebe.zfwk.core.proto.counter.HttpRequestCounter
-import com.github.muguliebe.zfwk.core.proto.service.ProtoService
+import com.github.muguliebe.zfwk.proto.counter.HttpRequestCounter
+import com.github.muguliebe.zfwk.proto.service.ProtoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.GetMapping

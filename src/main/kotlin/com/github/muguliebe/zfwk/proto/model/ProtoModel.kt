@@ -1,4 +1,4 @@
-package com.github.muguliebe.zfwk.core.proto.model
+package com.github.muguliebe.zfwk.proto.model
 
 data class ProtoModel(
     var one: String? = null,
